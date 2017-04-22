@@ -67,6 +67,28 @@ QMNode QMNode::mergeNode(QMNode* a, QMNode* b)
     return node;
 }
 
+std::string QMNode::varStr()
+{
+    std::string varString;
+    char varName = 'a';
+    for(auto& var : value)
+    {
+        if(var == '1')
+        {
+            varString += varName;
+            varString += " ";
+        }
+        else if(var == '0')
+        {
+            varString += varName;
+            varString += "'";
+        }
+        else{;}
+        varName++;
+    }
+    return varString;
+}
+
 std::ostream& operator <<(std::ostream& out, const QMNode& node)
 {
     out << "(";

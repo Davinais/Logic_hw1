@@ -164,7 +164,31 @@ int main()
         }
         cout << endl;
         cout << string(lspace, '-') << "|" << string(minTerm.size()*columnWidth, '-') << endl;
-
+        for(auto& row : qm)
+        {
+            for(auto& implicant : row)
+            {
+                cout << setw(lspace) << implicant.varStr() << "|";
+                string varSelect(minTerm.size()*3, ' ');
+                for(auto& num : implicant.getNumber())
+                {
+                    int pos = -1;
+                    for(int i = 0; i < minTerm.size(); i++)
+                    {
+                        if(minTerm[i] == num)
+                        {
+                            pos = i+1;
+                            break;
+                        }
+                    }
+                    if(pos > 0)
+                    {
+                        varSelect[pos*3-1] = 'x';
+                    }
+                }
+                cout << varSelect << endl;
+            }
+        }
     }
     return 0;
 }

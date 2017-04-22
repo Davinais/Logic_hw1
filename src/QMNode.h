@@ -12,10 +12,13 @@ class QMNode
         int count();
         int getPhase() {return phase;};
         bool isMerged() {return merged;};
+        const std::vector<int>& getNumber() const {return number;};
 
         bool canMerge(QMNode);
         bool compare(QMNode);
         static QMNode mergeNode(QMNode*, QMNode*);
+
+        std::string varStr();
 
         friend std::ostream& operator <<(std::ostream&, const QMNode&);
     

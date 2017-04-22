@@ -53,18 +53,18 @@ int QMNode::getMergePos(QMNode a)
 }
 QMNode QMNode::mergeNode(QMNode* a, QMNode* b)
 {
-    QMNode* node = new QMNode();
-    node->number.reserve(a->number.size() + b->number.size());
-    node->number.insert(node->number.end(), a->number.begin(), a->number.end());
-    node->number.insert(node->number.end(), b->number.begin(), b->number.end());
+    QMNode node;
+    node.number.reserve(a->number.size() + b->number.size());
+    node.number.insert(node.number.end(), a->number.begin(), a->number.end());
+    node.number.insert(node.number.end(), b->number.begin(), b->number.end());
     a->merged = true;
     b->merged = true;
-    node->phase = node->number.size();
+    node.phase = node.number.size();
     std::string temp = a->value;
     temp[a->getMergePos(*b)] = '-';
-    node->value = temp;
-    node->merged = false;
-    return *node;
+    node.value = temp;
+    node.merged = false;
+    return node;
 }
 
 std::ostream& operator <<(std::ostream& out, const QMNode& node)

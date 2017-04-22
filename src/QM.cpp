@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -44,8 +45,8 @@ int main()
                 return 3;
             }
             minTerm.push_back(i);
-            QMNode* node = new QMNode(i, var_num);
-            qm[node->count()].push_back(*node);
+            QMNode node(i, var_num);
+            qm[node.count()].push_back(node);
         }
     }
     input.close();
@@ -133,6 +134,37 @@ int main()
             break;
         }
         phase *= 2;
+    }
+    //移除不必要元素，即是已經被合併過的
+    {
+        for(auto& row : qm)
+        {
+            for(auto it = row.begin(); it != row.end();)
+            {
+                if(it->isMerged())
+                {
+                    it = row.erase(it);
+                }
+                else
+                {
+                    it++;
+                }
+            }
+        }
+    }
+    {
+        cout << "Result" << endl
+             << "==============================" << endl;
+        int lspace = var_num * 2;
+        cout << setw(lspace) << "" << "|";
+        int columnWidth = 3;
+        for(auto& need : minTerm)
+        {
+            cout << setw(columnWidth) << need;
+        }
+        cout << endl;
+        cout << string(lspace, '-') << "|" << string(minTerm.size()*columnWidth, '-') << endl;
+
     }
     return 0;
 }

@@ -26,7 +26,7 @@ int main()
         return 2;
     }
     int minterm_num = 1;
-    minterm_num = minterm_num << var_num;
+    minterm_num <<= var_num;
     vector<int> minTerm;
     vector< vector<QMNode> > qm(var_num+1, vector<QMNode>());
     string line;
@@ -97,7 +97,7 @@ int main()
         if(!mergeQueue.empty())
         {
             int count = -1;
-            cout << "Round " << (phase/2)+1+1 << endl //第一個加一補的是phase/2，第二個補的是外面被算過的Round 1
+            cout << "Round " << (phase>>1)+1+1 << endl //第一個加一補的是phase/2，第二個補的是外面被算過的Round 1
                  << "==============================" << endl;
             while(!mergeQueue.empty())
             {
@@ -133,7 +133,7 @@ int main()
         {
             break;
         }
-        phase *= 2;
+        phase <<= 1;
     }
     //移除不必要元素，即是已經被合併過的
     {

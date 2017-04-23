@@ -5,13 +5,12 @@ QMNode::QMNode(int num, int size)
 {
     number.push_back(num);
     phase = 1;
-    for(;num > 1;num/=2)
+    for(;num > 0;num>>=1)
     {
         std::ostringstream temp;
-        temp << num%2;
+        temp << num%2; //等同於(num&1)
         value = temp.str() + value;
     }
-    value = "1" + value;
     while(value.size() < size)
     {
         value = "0" + value;

@@ -173,7 +173,8 @@ int main()
                 for(auto& num : implicant.getNumber())
                 {
                     int pos = -1;
-                    for(int i = 0; i < minTerm.size(); i++)
+                    int varSize = (int)minTerm.size();
+                    for(int i = 0; i < varSize; i++)
                     {
                         if(minTerm[i] == num)
                         {

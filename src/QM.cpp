@@ -1,8 +1,8 @@
 #include <iostream>
-#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <map>
 #include <vector>
 #include "QMNode.h"
 #include "QMOperate.h"
@@ -28,7 +28,7 @@ int main()
     int minterm_num = 1;
     minterm_num <<= var_num;
     vector<int> minTerm;
-    vector< vector<QMNode> > qm(var_num+1, vector<QMNode>());
+    QMTable qm(var_num+1, vector<QMNode>());
     string line;
     while(getline(input, line))
     {
@@ -52,47 +52,97 @@ int main()
     input.close();
     printInitial(&qm);
     qm = simplify(qm, var_num);
+    QMTableP minTermCount = piChart(&qm, minTerm, var_num);
+    vector<QMNode> select;
     {
-        cout << "Result" << endl
-             << "==============================" << endl;
-        int lspace = var_num * 2;
-        cout << setw(lspace) << "" << "|";
-        int columnWidth = 3;
-        for(auto& need : minTerm)
+        for(auto& stat : minTermCount)
         {
-            cout << setw(columnWidth) << need;
-        }
-        cout << endl;
-        cout << string(lspace, '-') << "|" << string(minTerm.size()*columnWidth, '-') << endl;
-        for(auto& row : qm)
-        {
-            for(auto& implicant : row)
+            if(stat.size() == 1)
             {
-                cout << setw(lspace) << implicant.varStr() << "|";
-                string varSelect(minTerm.size()*3, ' ');
-                for(auto& num : implicant.getNumber())
+                select.push_back(*stat[0]);
+            }
+        }
+        for(auto& chosen : select)
+        {
+            for(auto it = minTermCount.begin(); it != minTermCount.end();)
+            {
+                bool exist = false;
+                for(auto& term : *it)
                 {
-                    int pos = -1;
-                    int varSize = (int)minTerm.size();
-                    for(int i = 0; i < varSize; i++)
+                    if(*term == chosen)
                     {
-                        if(minTerm[i] == num)
-                        {
-                            pos = i+1;
-                            break;
-                        }
-                    }
-                    if(pos > 0)
-                    {
-                        varSelect[pos*3-1] = 'x';
+                        exist = true;
+                        break;
                     }
                 }
-                cout << varSelect << endl;
+                if(exist)
+                {
+                    it = minTermCount.erase(it);
+                }
+                else
+                {
+                    it++;
+                }
+            }
+        }
+        map<string, QMNode> nodeName;
+        map<string, int> nodeCount;
+        for(auto& row : qm)
+        {
+            for(auto& term : row)
+            {
+                nodeName[term.getValue()] = term;
+                nodeCount[term.getValue()] = 0;
+            }
+        }
+        while(!minTermCount.empty())
+        {
+            for(auto& stat : minTermCount)
+            {
+                for(auto& term : stat)
+                {
+                    nodeCount[term->getValue()]++;
+                }
+            }
+            string current;
+            for(auto& term : nodeCount)
+            {
+                if(current == "")
+                {
+                    current = term.first;
+                }
+                else if(term.second > nodeCount[current])
+                {
+                    current = term.first;
+                }
+            }
+            select.push_back(nodeName[current]);
+            for(auto it = minTermCount.begin(); it != minTermCount.end();)
+            {
+                bool exist = false;
+                for(auto& term : *it)
+                {
+                    if(*term == nodeName[current])
+                    {
+                        exist = true;
+                        break;
+                    }
+                }
+                if(exist)
+                {
+                    it = minTermCount.erase(it);
+                }
+                else
+                {
+                    it++;
+                }
+            }
+            for(auto& term : nodeCount)
+            {
+                term.second = 0;
             }
         }
     }
-    {
-
-    }
+    printFinal(select, var_num);
     return 0;
 }

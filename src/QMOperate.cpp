@@ -24,7 +24,7 @@ void printInitial(QMTable* qm)
 QMTable simplify(QMTable qm, int var_num)
 {
     int phase = 1;
-    while(phase <= var_num)
+    while(phase <= var_num*2) //忘了考慮最極限的情形
     {
         int wave = 1;
         queue<QMNode> mergeQueue;
@@ -110,4 +110,78 @@ QMTable simplify(QMTable qm, int var_num)
         }
     }
     return qm;
+}
+QMTableP piChart(QMTable* qm, vector<int> minTerm, int var_num)
+{
+    QMTableP minTermCount(minTerm.size(), vector<QMNode*>());
+    cout << "Result" << endl
+            << "==============================" << endl;
+    int lspace = var_num * 2;
+    cout << setw(lspace) << "" << "|";
+    int columnWidth = 3;
+    for(auto& need : minTerm)
+    {
+        cout << setw(columnWidth) << need;
+    }
+    cout << endl;
+    cout << string(lspace, '-') << "|" << string(minTerm.size()*columnWidth, '-') << endl;
+    for(auto& row : *qm)
+    {
+        for(auto& implicant : row)
+        {
+            cout << setw(lspace) << implicant.varStr() << "|";
+            string varSelect(minTerm.size()*columnWidth, ' ');
+            for(auto& num : implicant.getNumber())
+            {
+                int pos = -1;
+                int varSize = (int)minTerm.size();
+                for(int i = 0; i < varSize; i++)
+                {
+                    if(minTerm[i] == num)
+                    {
+                        pos = i+1;
+                        minTermCount[i].push_back(&implicant);
+                        break;
+                    }
+                }
+                if(pos > 0)
+                {
+                    varSelect[pos*columnWidth-1] = 'x';
+                }
+            }
+            cout << varSelect << endl;
+        }
+    }
+    cout << endl;
+    return minTermCount;
+}
+void printFinal(vector<QMNode> select, int var_num)
+{
+    cout << "F(";
+    char var = 'A';
+    for(int i=0; i<var_num;)
+    {
+        cout << var;
+        i++;
+        var++;
+        if(i < var_num)
+            cout << ",";
+        else
+            cout << ") = ";
+    }
+    for(auto it = select.begin(); it != select.end(); )
+    {
+        string var = it->varStr();
+        if(var == "")
+        {
+            cout << " 1 " << endl;
+            break;
+        }
+        cout << it->varStr();
+        it++;
+        if(it != select.end())
+            cout << "+";
+        else
+            cout << endl;
+    }
 }

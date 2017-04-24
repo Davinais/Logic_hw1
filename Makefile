@@ -1,5 +1,5 @@
 CXX = clang++
-CXXFLAGS = -g -std=c++11
+CXXFLAGS = -g -std=c++11 -Wall -Wextra
 
 BIN_DIR = bin
 BUILD_DIR = obj

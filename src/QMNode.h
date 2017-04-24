@@ -8,6 +8,7 @@ class QMNode
 {
     public:
         QMNode(int, int);
+        QMNode() {merged = false;};
 
         int count();
         int getPhase() {return phase;};
@@ -19,11 +20,13 @@ class QMNode
         static QMNode mergeNode(QMNode*, QMNode*);
 
         std::string varStr();
+        std::string getValue() {return value;};
 
         friend std::ostream& operator <<(std::ostream&, const QMNode&);
+        bool operator ==(const QMNode& a) const {return !(this->value.compare(a.value));};
+        bool operator <(const QMNode& a) const {return (this->phase < a.phase);};
     
     private:
-        QMNode() {};
         int getMergePos(QMNode);
         int phase;
         std::vector<int> number;

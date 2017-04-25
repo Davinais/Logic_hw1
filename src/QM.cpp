@@ -55,6 +55,16 @@ int main()
     QMTableP minTermCount = piChart(&qm, minTerm, var_num);
     vector<QMNode> select;
     {
+		vector< vector<string> > toFinal;
+		for(auto& stat : minTermCount)
+		{
+            vector<string> temp;
+			for(auto& term : stat)
+            {
+                temp.push_back(term->getValue());
+            }
+            toFinal.push_back(temp);
+		}
         for(auto& stat : minTermCount)
         {
             if(stat.size() == 1)

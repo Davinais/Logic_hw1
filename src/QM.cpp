@@ -2,7 +2,6 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <map>
 #include <vector>
 #include "QMNode.h"
 #include "QMOperate.h"
@@ -53,106 +52,7 @@ int main()
     printInitial(&qm);
     qm = simplify(qm, var_num);
     QMTableP minTermCount = piChart(&qm, minTerm, var_num);
-    vector<QMNode> select;
-    {
-		vector< vector<string> > toFinal;
-		for(auto& stat : minTermCount)
-		{
-            vector<string> temp;
-			for(auto& term : stat)
-            {
-                temp.push_back(term->getValue());
-            }
-            toFinal.push_back(temp);
-		}
-        for(auto& stat : minTermCount)
-        {
-            if(stat.size() == 1)
-            {
-                select.push_back(*stat[0]);
-            }
-        }
-        for(auto& chosen : select)
-        {
-            for(auto it = minTermCount.begin(); it != minTermCount.end();)
-            {
-                bool exist = false;
-                for(auto& term : *it)
-                {
-                    if(*term == chosen)
-                    {
-                        exist = true;
-                        break;
-                    }
-                }
-                if(exist)
-                {
-                    it = minTermCount.erase(it);
-                }
-                else
-                {
-                    it++;
-                }
-            }
-        }
-        map<string, QMNode> nodeName;
-        map<string, int> nodeCount;
-        for(auto& row : qm)
-        {
-            for(auto& term : row)
-            {
-                nodeName[term.getValue()] = term;
-                nodeCount[term.getValue()] = 0;
-            }
-        }
-        while(!minTermCount.empty())
-        {
-            for(auto& stat : minTermCount)
-            {
-                for(auto& term : stat)
-                {
-                    nodeCount[term->getValue()]++;
-                }
-            }
-            string current;
-            for(auto& term : nodeCount)
-            {
-                if(current == "")
-                {
-                    current = term.first;
-                }
-                else if(term.second > nodeCount[current])
-                {
-                    current = term.first;
-                }
-            }
-            select.push_back(nodeName[current]);
-            for(auto it = minTermCount.begin(); it != minTermCount.end();)
-            {
-                bool exist = false;
-                for(auto& term : *it)
-                {
-                    if(*term == nodeName[current])
-                    {
-                        exist = true;
-                        break;
-                    }
-                }
-                if(exist)
-                {
-                    it = minTermCount.erase(it);
-                }
-                else
-                {
-                    it++;
-                }
-            }
-            for(auto& term : nodeCount)
-            {
-                term.second = 0;
-            }
-        }
-    }
+    QMTable select = petrickMethod(qm, minTermCount, var_num);
     printFinal(select, var_num);
     return 0;
 }

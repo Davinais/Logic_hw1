@@ -10,6 +10,7 @@ typedef std::vector< std::vector<QMNode*> > QMTableP;
 void printInitial(QMTable*);
 QMTable simplify(QMTable, int);
 QMTableP piChart(QMTable*, std::vector<int>, int);
-void printFinal(std::vector<QMNode>, int);
+QMTable petrickMethod(QMTable, QMTableP, int);
+void printFinal(QMTable, int);
 
 #endif

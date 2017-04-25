@@ -1,5 +1,8 @@
 #include <iostream>
 #include <iomanip>
+#include <sstream>
+#include <map>
+#include <deque>
 #include <queue>
 #include "QMOperate.h"
 using namespace std;
@@ -155,33 +158,163 @@ QMTableP piChart(QMTable* qm, vector<int> minTerm, int var_num)
     cout << endl;
     return minTermCount;
 }
-void printFinal(vector<QMNode> select, int var_num)
+QMTable petrickMethod(QMTable qm, QMTableP minTermCount, int var_num)
 {
-    cout << "F(";
-    char var = 'A';
-    for(int i=0; i<var_num;)
+    vector< vector<string> > toFinal;
+    for(auto& stat : minTermCount)
     {
-        cout << var;
-        i++;
-        var++;
-        if(i < var_num)
-            cout << ",";
-        else
-            cout << ") = ";
-    }
-    for(auto it = select.begin(); it != select.end(); )
-    {
-        string var = it->varStr();
-        if(var == "")
+        vector<string> temp;
+        for(auto& term : stat)
         {
-            cout << " 1 " << endl;
-            break;
+            temp.push_back(term->getValue());
         }
-        cout << it->varStr();
-        it++;
-        if(it != select.end())
-            cout << "+";
+        toFinal.push_back(temp);
+    }
+    deque<string> finalAns;
+    while(!toFinal.empty())
+    {
+        vector<string> current = toFinal.back();
+        if(finalAns.empty())
+        {
+            for(auto& item : current)
+            {
+                finalAns.push_back(item);
+            }
+        }
         else
-            cout << endl;
+        {
+            int size = 0, should = finalAns.size()*current.size();
+            while(size < should)
+            {
+                string adding = finalAns.front();
+                for(auto& added : current)
+                {
+                    if(adding.find(added) == string::npos)
+                        finalAns.push_back(adding + " " + added);
+                    else
+                        finalAns.push_back(adding);
+                    size++;
+                }
+                finalAns.pop_front();
+            }
+            for(auto it = finalAns.begin(); it != finalAns.end(); it++)
+            {
+                if(!(*it).compare("NONEED"))
+                    continue;
+                vector<string> subterm;
+                {
+                    istringstream sub(*it);
+                    string temp;
+                    while(getline(sub, temp, ' '))
+                    {
+                        subterm.push_back(temp);
+                    }
+                }
+                for(auto check = finalAns.begin(); check != finalAns.end(); check++)
+                {
+                    if(check == it)
+                    {
+                        string temp;
+                        for(auto& dupli : subterm)
+                        {
+                            if(temp.find(dupli) == string::npos)
+                            {
+                                temp = temp + dupli + " ";
+                            }
+                        }
+                        temp.pop_back();
+                        *check = temp;
+                    }
+                    else
+                    {
+                        int contain = 0;
+                        for(auto& dupli : subterm)
+                        {
+                            if((*check).find(dupli) != string::npos)
+                            {
+                                contain++;
+                            }
+                        }
+                        if(contain >= subterm.size())
+                        {
+                            *check = "NONEED";
+                        }
+                    }
+                }
+            }
+            for(auto it = finalAns.begin(); it != finalAns.end();)
+            {
+                if(!(*it).compare("NONEED"))
+                    it = finalAns.erase(it);
+                else
+                    it++;
+            }
+        }
+        toFinal.pop_back();
+    }
+    int minSize = -1;
+    for(auto& term : finalAns)
+    {
+        if(minSize == -1)
+            minSize = term.size();
+        else if(term.size() < minSize)
+            minSize = term.size();
+    }
+    map<string, QMNode> nodeName;
+    for(auto& row : qm)
+    {
+        for(auto& term : row)
+        {
+            nodeName[term.getValue()] = term;
+        }
+    }
+    QMTable select;
+    for(auto& ans : finalAns)
+    {
+        if(ans.size() <= minSize)
+        {
+            stringstream ansin(ans);
+            string temp;
+            vector<QMNode> answer;
+            while(getline(ansin, temp, ' '))
+            {
+                answer.push_back(nodeName[temp]);
+            }
+            select.push_back(answer);
+        }
+    }
+    return select;
+}
+void printFinal(QMTable select, int var_num)
+{
+    for(auto& ans : select)
+    {
+        cout << "F(";
+        char var = 'A';
+        for(int i=0; i<var_num;)
+        {
+            cout << var;
+            i++;
+            var++;
+            if(i < var_num)
+                cout << ",";
+            else
+                cout << ") = ";
+        }
+        for(auto it = ans.rbegin(); it != ans.rend();)
+        {
+            string var = it->varStr();
+            if(var == "")
+            {
+                cout << " 1 " << endl;
+                break;
+            }
+            cout << it->varStr();
+            it++;
+            if(it != ans.rend())
+                cout << "+";
+            else
+                cout << endl;
+        }
     }
 }

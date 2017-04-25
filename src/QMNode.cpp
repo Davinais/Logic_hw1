@@ -5,6 +5,7 @@ QMNode::QMNode(int num, int size)
 {
     number.push_back(num);
     phase = 1;
+    //轉換為二進制
     for(;num > 0;num>>=1)
     {
         std::ostringstream temp;
@@ -29,6 +30,7 @@ int QMNode::count()
 }
 bool QMNode::canMerge(QMNode a)
 {
+    //檢查可否合併，即其value字串是否只有一個字元不相等
     int notEqual = 0;
     for(int i=0; i<value.size(); i++)
     {
@@ -50,6 +52,7 @@ int QMNode::getMergePos(QMNode a)
     }
     return -1;
 }
+//合併用函數，將兩Node唯一不同的地方改為'-'，兩者蘊含數字合併後，存入新Node
 QMNode QMNode::mergeNode(QMNode* a, QMNode* b)
 {
     QMNode node;
@@ -69,6 +72,7 @@ QMNode QMNode::mergeNode(QMNode* a, QMNode* b)
 std::string QMNode::varStr()
 {
     std::string varString;
+    //回傳以abc等變數為基礎的字串，若為1則直接印出該變數，0則在該變數後面再補上'，-則不印出
     char varName = 'a';
     for(auto& var : value)
     {

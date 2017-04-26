@@ -10,7 +10,7 @@ using namespace std;
 
 void printInput(vector<int>* minTerm, vector<int>* dontCare)
 {
-    cout << "輸入：" << endl
+    cout << "Input:" << endl
          << "Min Term:" << endl
          << "  ";
     sort(minTerm->begin(), minTerm->end());

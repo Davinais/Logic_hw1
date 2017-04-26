@@ -12,15 +12,15 @@ int readMinTerm(QMTable* qm, vector<int>* minTerm, string fileName)
     input.open(fileName);
     if(!input)
     {
-        cerr << "ç„¡æ³•è®€å–æª”æ¡ˆï¼" << endl
-             << "è«‹ç¢ºèªæª”æ¡ˆæ˜¯å¦å­˜åœ¨ï¼" << endl;
+        cerr << "µLªkÅª¨úÀÉ®×¡I" << endl
+             << "½Ð½T»{ÀÉ®×¬O§_¦s¦b¡I" << endl;
         exit(1);
     }
     int var_num = 0;
     input >> var_num;
     if(var_num < 2 || var_num > 6)
     {
-        cerr << "ç›®å‰åªèƒ½è™•ç†2~6å€‹è®Šæ•¸å–”ï¼" << endl;
+        cerr << "¥Ø«e¥u¯à³B²z2~6­ÓÅÜ¼Æ³á¡I" << endl;
         exit(2);
     }
     int minterm_num = 1;
@@ -38,7 +38,7 @@ int readMinTerm(QMTable* qm, vector<int>* minTerm, string fileName)
             vars >> i;
             if(i > minterm_num - 1)
             {
-                cerr << "éŒ¯èª¤çš„è¼¸å…¥ï¼è¶…å‡ºè®Šæ•¸ç¯„åœï¼" << endl;
+                cerr << "¿ù»~ªº¿é¤J¡I¶W¥XÅÜ¼Æ½d³ò¡I" << endl;
                 exit(3);
             }
             minTerm->push_back(i);
@@ -62,8 +62,8 @@ vector<int> readDontCare(QMTable* qm, const vector<int>* minTerm, int var_num, s
         input >> var_num2;
         if(var_num2 != var_num)
         {
-            cerr << "è«‹å°‡minTermèˆ‡Don't Careè®Šæ•¸æ•¸é‡èª¿æ•´æˆä¸€æ¨£ä¹‹å¾Œï¼Œ" << endl
-                 << "å†ä½¿ç”¨æœ¬ç¨‹å¼ï¼Œæ„Ÿè¬é…åˆï¼" << endl;
+            cerr << "½Ð±NminTerm»PDon't CareÅÜ¼Æ¼Æ¶q½Õ¾ã¦¨¤@¼Ë¤§«á¡A" << endl
+                 << "¦A¨Ï¥Î¥»µ{¦¡¡A·PÁÂ°t¦X¡I" << endl;
             exit(4);
         }
         else
@@ -80,12 +80,12 @@ vector<int> readDontCare(QMTable* qm, const vector<int>* minTerm, int var_num, s
                     vars >> i;
                     if(i > minterm_num - 1)
                     {
-                        cerr << "éŒ¯èª¤çš„è¼¸å…¥ï¼è¶…å‡ºè®Šæ•¸ç¯„åœï¼" << endl;
+                        cerr << "¿ù»~ªº¿é¤J¡I¶W¥XÅÜ¼Æ½d³ò¡I" << endl;
                         exit(3);
                     }
                     else if(find(minTerm->begin(), minTerm->end(), i) != minTerm->end())
                     {
-                        cerr << "éŒ¯èª¤çš„è¼¸å…¥ï¼minTermé‡è¤‡å‡ºç¾åœ¨Don't Careï¼" << endl;
+                        cerr << "¿ù»~ªº¿é¤J¡IminTerm­«½Æ¥X²{¦bDon't Care¡I" << endl;
                         exit(3);
                     }
                     dontCare.push_back(i);

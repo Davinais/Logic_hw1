@@ -10,7 +10,7 @@
 #include "QMstreamIm.h"
 using namespace std;
 
-void printInput(vector<int>* minTerm, vector<int>* dontCare, SFout& out)
+void printInput(MinTerm* minTerm, MinTerm* dontCare, SFout& out)
 {
     out << "Input:" << endl
          << "Min Term:" << endl
@@ -137,7 +137,7 @@ QMTable simplify(QMTable qm, int var_num, SFout& out)
     }
     return qm;
 }
-QMTableP piChart(QMTable* qm, vector<int> minTerm, int var_num, SFout& out)
+QMTableP piChart(QMTable* qm, MinTerm minTerm, int var_num, SFout& out)
 {
     QMTableP minTermCount(minTerm.size(), vector<QMNode*>());
     out << "Result:" << endl;

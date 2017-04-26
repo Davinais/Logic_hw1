@@ -1,7 +1,3 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
 #include "QMNode.h"
 #include "QMOperate.h"
 #include "QMio.h"
@@ -11,9 +7,9 @@ using namespace std;
 int main()
 {
     QMTable qm;
-    vector<int> minTerm;
+    MinTerm minTerm;
     int var_num = readMinTerm(&qm, &minTerm, "input.txt");
-    vector<int> dontCare = readDontCare(&qm, &minTerm, var_num, "input2.txt");
+    MinTerm dontCare = readDontCare(&qm, &minTerm, var_num, "input2.txt");
     SFout out("output.txt");
     printInput(&minTerm, &dontCare, out);
     printInitial(&qm, out);

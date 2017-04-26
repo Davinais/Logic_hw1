@@ -12,7 +12,4 @@ struct SFout : std::ofstream
 
     const std::string fileName;
 };
-/*template <class T>
-SFout& operator<<(SFout&, const T&);
-SFout& operator<<(SFout&, std::ostream& (*pfun)(std::ostream&));*/
 #endif

@@ -5,13 +5,14 @@
 #include "QMNode.h"
 #include "QMstream.h"
 
+typedef std::vector<int> MinTerm;
 typedef std::vector< std::vector<QMNode> > QMTable;
 typedef std::vector< std::vector<QMNode*> > QMTableP;
 
-void printInput(std::vector<int>*, std::vector<int>*, SFout&);
+void printInput(MinTerm*, MinTerm*, SFout&);
 void printInitial(QMTable*, SFout&);
 QMTable simplify(QMTable, int, SFout&);
-QMTableP piChart(QMTable*, std::vector<int>, int, SFout&);
+QMTableP piChart(QMTable*, MinTerm, int, SFout&);
 QMTable petrickMethod(QMTable, QMTableP, int);
 void printFinal(QMTable, int, SFout&);
 

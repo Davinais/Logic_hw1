@@ -1,12 +1,33 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <algorithm>
 #include <map>
 #include <deque>
 #include <queue>
 #include "QMOperate.h"
 using namespace std;
 
+void printInput(vector<int>* minTerm, vector<int>* dontCare)
+{
+    cout << "輸入：" << endl
+         << "Min Term:" << endl
+         << "  ";
+    sort(minTerm->begin(), minTerm->end());
+    for(auto& mt : *minTerm)
+        cout << mt << " ";
+    cout << endl;
+    if(!dontCare->empty())
+    {
+        sort(dontCare->begin(), dontCare->end());
+        cout << "Don't Care:" << endl
+             << "  ";
+        for(auto& dc : *dontCare)
+            cout << dc << " ";
+        cout << endl;
+    }
+    cout << endl;
+}
 void printInitial(QMTable* qm)
 {
     cout << "Round 1" << endl

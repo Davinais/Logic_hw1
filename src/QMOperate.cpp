@@ -6,31 +6,33 @@
 #include <deque>
 #include <queue>
 #include "QMOperate.h"
+#include "QMstream.h"
+#include "QMstreamIm.h"
 using namespace std;
 
-void printInput(vector<int>* minTerm, vector<int>* dontCare)
+void printInput(vector<int>* minTerm, vector<int>* dontCare, SFout& out)
 {
-    cout << "Input:" << endl
+    out << "Input:" << endl
          << "Min Term:" << endl
          << "  ";
     sort(minTerm->begin(), minTerm->end());
     for(auto& mt : *minTerm)
-        cout << mt << " ";
-    cout << endl;
+        out << mt << " ";
+    out << endl;
     if(!dontCare->empty())
     {
         sort(dontCare->begin(), dontCare->end());
-        cout << "Don't Care:" << endl
+        out << "Don't Care:" << endl
              << "  ";
         for(auto& dc : *dontCare)
-            cout << dc << " ";
-        cout << endl;
+            out << dc << " ";
+        out << endl;
     }
-    cout << endl;
+    out << endl;
 }
-void printInitial(QMTable* qm)
+void printInitial(QMTable* qm, SFout& out)
 {
-    cout << "Round 1" << endl
+    out << "Round 1" << endl
              << "==============================" << endl;
         for(auto& row : *qm)
         {
@@ -38,14 +40,14 @@ void printInitial(QMTable* qm)
             {
                 for(auto& col : row)
                 {
-                    cout << col << endl;
+                    out << col << endl;
                 }
-                cout << "------------------------------" << endl;
+                out << "------------------------------" << endl;
             }
         }
-    cout << endl;
+    out << endl;
 }
-QMTable simplify(QMTable qm, int var_num)
+QMTable simplify(QMTable qm, int var_num, SFout& out)
 {
     int phase = 1;
     while(phase <= var_num*2) //忘了考慮最極限的情形，即所有位數都被化簡，故*2
@@ -78,7 +80,7 @@ QMTable simplify(QMTable qm, int var_num)
         if(!mergeQueue.empty())
         {
             int count = -1;
-            cout << "Round " << (phase>>1)+1+1 << endl //第一個加一補的是phase/2，第二個補的是外面被算過的Round 1
+            out << "Round " << (phase>>1)+1+1 << endl //第一個加一補的是phase/2，第二個補的是外面被算過的Round 1
                  << "==============================" << endl;
             while(!mergeQueue.empty())
             {
@@ -100,14 +102,14 @@ QMTable simplify(QMTable qm, int var_num)
                     qm[nowCount].push_back(*getIn);
                     if(nowCount != count)
                     {
-                        cout << "------------------------------" << endl;
+                        out << "------------------------------" << endl;
                         count = nowCount;
                     }
-                    cout << *getIn << endl;
+                    out << *getIn << endl;
                 }
                 mergeQueue.pop();
             }
-            cout << "------------------------------" << endl
+            out << "------------------------------" << endl
                  << endl;
         }
         else
@@ -135,27 +137,27 @@ QMTable simplify(QMTable qm, int var_num)
     }
     return qm;
 }
-QMTableP piChart(QMTable* qm, vector<int> minTerm, int var_num)
+QMTableP piChart(QMTable* qm, vector<int> minTerm, int var_num, SFout& out)
 {
     QMTableP minTermCount(minTerm.size(), vector<QMNode*>());
-    cout << "Result:" << endl;
+    out << "Result:" << endl;
     int lspace = var_num * 2;
-    cout << setw(lspace) << "" << "|";
+    out << setw(lspace) << "" << "|";
     //印出minTerm數字
     int columnWidth = 3;
     for(auto& need : minTerm)
     {
-        cout << setw(columnWidth) << need;
+        out << setw(columnWidth) << need;
     }
-    cout << endl;
+    out << endl;
     //印出分隔線
-    cout << string(lspace, '-') << "|" << string(minTerm.size()*columnWidth, '-') << endl;
+    out << string(lspace, '-') << "|" << string(minTerm.size()*columnWidth, '-') << endl;
     //印出每個term以及其蘊含的數字
     for(auto& row : *qm)
     {
         for(auto& implicant : row)
         {
-            cout << setw(lspace) << implicant.varStr() << "|";
+            out << setw(lspace) << implicant.varStr() << "|";
             string varSelect(minTerm.size()*columnWidth, ' ');
             for(auto& num : implicant.getNumber())
             {
@@ -175,10 +177,10 @@ QMTableP piChart(QMTable* qm, vector<int> minTerm, int var_num)
                     varSelect[pos*columnWidth-1] = 'x';
                 }
             }
-            cout << varSelect << endl;
+            out << varSelect << endl;
         }
     }
-    cout << endl;
+    out << endl;
     return minTermCount;
 }
 QMTable petrickMethod(QMTable qm, QMTableP minTermCount, int var_num)
@@ -321,22 +323,22 @@ QMTable petrickMethod(QMTable qm, QMTableP minTermCount, int var_num)
     }
     return select;
 }
-void printFinal(QMTable select, int var_num)
+void printFinal(QMTable select, int var_num, SFout& out)
 {
     for(auto& ans : select)
     {
         //印出F(...)
-        cout << "F(";
+        out << "F(";
         char var = 'A';
         for(int i=0; i<var_num;)
         {
-            cout << var;
+            out << var;
             i++;
             var++;
             if(i < var_num)
-                cout << ",";
+                out << ",";
             else
-                cout << ") = ";
+                out << ") = ";
         }
         //印出最終合併的term，由於化簡時是從最後一個括號開始運算，此處反相印回來，其順序就會跟Prime Implicant表上至下順序相同
         for(auto it = ans.rbegin(); it != ans.rend();)
@@ -344,15 +346,15 @@ void printFinal(QMTable select, int var_num)
             string var = it->varStr();
             if(var == "")
             {
-                cout << " 1 " << endl;
+                out << " 1 " << endl;
                 break;
             }
-            cout << it->varStr();
+            out << it->varStr();
             it++;
             if(it != ans.rend())
-                cout << "+";
+                out << "+";
             else
-                cout << endl;
+                out << endl;
         }
     }
 }

@@ -5,6 +5,7 @@
 #include "QMNode.h"
 #include "QMOperate.h"
 #include "QMio.h"
+#include "QMstream.h"
 using namespace std;
 
 int main()
@@ -13,13 +14,12 @@ int main()
     vector<int> minTerm;
     int var_num = readMinTerm(&qm, &minTerm, "input.txt");
     vector<int> dontCare = readDontCare(&qm, &minTerm, var_num, "input2.txt");
-    ofstream outFile;
-    outFile.open("output.txt");
-    printInput(&minTerm, &dontCare);
-    printInitial(&qm);
-    qm = simplify(qm, var_num);
-    QMTableP minTermCount = piChart(&qm, minTerm, var_num);
+    SFout out("output.txt");
+    printInput(&minTerm, &dontCare, out);
+    printInitial(&qm, out);
+    qm = simplify(qm, var_num, out);
+    QMTableP minTermCount = piChart(&qm, minTerm, var_num, out);
     QMTable select = petrickMethod(qm, minTermCount, var_num);
-    printFinal(select, var_num);
+    printFinal(select, var_num, out);
     return 0;
 }

@@ -13,7 +13,7 @@ void printInput(MinTerm*, MinTerm*, SFout&);
 void printInitial(QMTable*, SFout&);
 QMTable simplify(QMTable, int, SFout&);
 QMTableP piChart(QMTable*, MinTerm, int, SFout&);
-QMTable petrickMethod(QMTable, QMTableP, int);
+QMTable petrickMethod(QMTable, QMTableP, int, SFout&);
 void printFinal(QMTable, int, SFout&);
 
 #endif

@@ -17,6 +17,7 @@ QMNode::QMNode(int num, int size)
         value = "0" + value;
     }
     merged = false;
+    calcCmpValue();
 }
 int QMNode::count()
 {
@@ -52,6 +53,31 @@ int QMNode::getMergePos(QMNode a)
     }
     return -1;
 }
+void QMNode::calcCmpValue()
+{
+    int weight = value.size() - 1;
+    cmpValue = 0;
+    for(auto& pos : value)
+    {
+        int posvar = 0;
+        switch(pos)
+        {
+            case '0':
+                posvar = 0;
+                break;
+            case '1':
+                posvar = 2;
+                break;
+            case '-':
+                posvar = 1;
+                break;
+            default:
+                posvar = -1;
+        }
+        cmpValue += posvar << weight;
+        weight--;
+    }
+}
 //合併用函數，將兩Node唯一不同的地方改為'-'，兩者蘊含數字合併後，存入新Node
 QMNode QMNode::mergeNode(QMNode* a, QMNode* b)
 {
@@ -66,6 +92,7 @@ QMNode QMNode::mergeNode(QMNode* a, QMNode* b)
     temp[a->getMergePos(*b)] = '-';
     node.value = temp;
     node.merged = false;
+    node.calcCmpValue();
     return node;
 }
 

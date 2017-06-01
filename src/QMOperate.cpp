@@ -183,7 +183,7 @@ QMTableP piChart(QMTable* qm, MinTerm minTerm, int var_num, SFout& out)
     out << endl;
     return minTermCount;
 }
-QMTable petrickMethod(QMTable qm, QMTableP minTermCount, int var_num)
+QMTable petrickMethod(QMTable qm, QMTableP minTermCount, int var_num, SFout& out)
 {
     vector< vector<string> > toFinal;
     /*將QMNode物件矩陣轉為其value字串的矩陣以方便化簡
@@ -197,6 +197,38 @@ QMTable petrickMethod(QMTable qm, QMTableP minTermCount, int var_num)
         }
         toFinal.push_back(temp);
     }
+    //建立一map方便將字串換回QMNode物件
+    map<string, QMNode> nodeName;
+    map<string, string> simplyName;
+    int simplyIndex = 1;
+    out << "==============================" << endl;
+    for(auto& row : qm)
+    {
+        for(auto& term : row)
+        {
+            nodeName[term.getValue()] = term;
+            ostringstream temp;
+            temp << simplyIndex;
+            simplyName[term.getValue()] = "P"+temp.str();
+            out << "P" << temp.str() << " = " << term << endl; 
+            simplyIndex++;
+        }
+    }
+    out << "------------------------------" << endl;
+    out << "  ";
+    //印出原本的式子
+    for(auto& process : toFinal)
+    {
+        out << "(";
+        for(auto& term : process)
+        {
+            out << simplyName[term];
+            if(term != process.back())
+                out << "+";
+        }
+        out << ")";
+    }
+    out << endl;
     /*使用deque，這是由於此處需要FIFO的結構做化簡，
     而C++的STL容器中，vector的結構FILO較快速，與stack較為接近，queue不可迭代與隨機存取，而deque可以迭代並且可以作FIFO或FILO*/
     deque<string> finalAns; //此deque為最後解答的容器，在運算結束後即會得到化簡解
@@ -286,7 +318,40 @@ QMTable petrickMethod(QMTable qm, QMTableP minTermCount, int var_num)
             }
         }
         toFinal.pop_back(); //移除toFinal最後面的括號，也就是剛剛在做運算的括號，代表運算結束
+        //印出本回合化簡的結果
+        out << "= ";
+        for(auto& process : toFinal)
+        {
+            out << "(";
+            for(auto& term : process)
+            {
+                out << simplyName[term];
+                if(term != process.back())
+                    out << "+";
+            }
+            out << ")";
+        }
+        out << "[";
+        for(auto& term : finalAns)
+        {
+            vector<string> subterm; //將每一項表示的乘積分開，以尋找是否可以化簡，如將原字串"X Y Z"拆成"X","Y","Z"
+            {
+                istringstream sub(term);
+                string temp;
+                while(getline(sub, temp, ' '))
+                {
+                    subterm.push_back(temp);
+                }
+                reverse(subterm.begin(), subterm.end());
+            }
+            for(auto& st : subterm)
+                out << "(" << simplyName[st] << ")";
+            if(term != finalAns.back())
+                out << "+";
+        }
+        out << "]" << endl;
     }
+    out << "------------------------------" << endl;
     //化簡完畢後，尋找相乘項數最少的項數數字為多少
     int minSize = -1;
     for(auto& term : finalAns)
@@ -295,15 +360,6 @@ QMTable petrickMethod(QMTable qm, QMTableP minTermCount, int var_num)
             minSize = term.size();
         else if(term.size() < minSize)
             minSize = term.size();
-    }
-    //建立一map方便將字串換回QMNode物件
-    map<string, QMNode> nodeName;
-    for(auto& row : qm)
-    {
-        for(auto& term : row)
-        {
-            nodeName[term.getValue()] = term;
-        }
     }
     //選出最少項數的項並放入select中，有可能有多種選擇，因此select是QMNode矩陣
     QMTable select;

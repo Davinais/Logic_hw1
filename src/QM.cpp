@@ -15,7 +15,7 @@ int main()
     printInitial(&qm, out);
     qm = simplify(qm, var_num, out);
     QMTableP minTermCount = piChart(&qm, minTerm, var_num, out);
-    QMTable select = petrickMethod(qm, minTermCount, var_num);
+    QMTable select = petrickMethod(qm, minTermCount, var_num, out);
     printFinal(select, var_num, out);
     return 0;
 }

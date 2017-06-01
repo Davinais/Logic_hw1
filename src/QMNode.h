@@ -24,11 +24,13 @@ class QMNode
 
         friend std::ostream& operator <<(std::ostream&, const QMNode&);
         bool operator ==(const QMNode& a) const {return !(this->value.compare(a.value));};
-        bool operator <(const QMNode& a) const {return (this->phase < a.phase);};
+        bool operator <(const QMNode& a) const {return (this->cmpValue < a.cmpValue);};
     
     private:
         int getMergePos(QMNode);
         int phase;
+        void calcCmpValue();
+        int cmpValue;
         std::vector<int> number;
         std::string value;
         bool merged;
